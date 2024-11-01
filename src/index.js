@@ -1,30 +1,47 @@
-import http from 'http';
-import {getItems, postItem, deleteItem, updateItem} from './items.js';
+import express from 'express';
+import {getItemById, getItems, mediaItems, postItem} from './media.js';
 const hostname = '127.0.0.1';
 const port = 3000;
+const app = express();
 
-// Create a server object and bind a callback function
-// to all request events
-const server = http.createServer((req, res) => {
-  const {url, method} = req;
-  console.log('url:', url, 'method:', method);
-  if (url === '/items' && method === 'GET') {
-    getItems(res);
-  } else if (url === '/items' && method === 'POST') {
-    postItem(req, res);
-  } else if (url.startsWith('/items/') && method === 'DELETE') {
-    const id = url.split('/')[2];
-    deleteItem(id, res);
-  } else if (url.startsWith('/items/') && method === 'PUT') {
-    const id = url.split('/')[2];
-    updateItem(id, req, res);
-  } else {
-    // Generic not found response
-    res.writeHead(404, {'Content-Type': 'application/json'});
-    res.end(JSON.stringify({error: '404', message: 'not found'}));
-  }
+app.set('view engine', 'pug');
+app.set('views', 'src/views');
+
+app.use(express.json());
+
+// Home page (client) as static html, css, js
+app.use(express.static('public'));
+// Uploaded media files
+app.use('/media', express.static('media'));
+
+// Api documentation tms. with pug
+app.get('/api', (req, res) => {
+  res.render('index', {
+    title: 'API Documentation',
+    message: 'TODO: include docs here!',
+    exampleData: mediaItems,
+  });
 });
 
-server.listen(port, hostname, () => {
+// Media resource endpoints
+app.get('/api/media', (req, res) => {
+  getItems(res);
+});
+
+app.get('/api/media/:id', (req, res) => {
+  //console.log('req.params', req.params);
+  //console.log('query params', req.query);
+  getItemById(req, res);
+});
+
+app.post('/api/media', (req, res) => {
+  postItem(req, res);
+});
+app.put('/api/media/:id', (req, res) => {
+  // TODO: implement this endpoint
+  res.status(501).json({message: 'Under construction'});
+});
+
+app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
