@@ -1,10 +1,10 @@
-// Data used for api, random famos quotes
+// Data used for api, random famous quotes
 
 const quotes = [
-  { id: 1, text: 'To be or not to be', author: 'Shakespeare' },
-  { id: 2, text: 'I think, therefore I am', author: 'Descartes' },
-  { id: 3, text: 'I have a dream', author: 'Martin Luther King' },
-  { id: 4, text: 'Tonights the night', author: 'Dexter Morgan'}
+  {id: 1, text: 'To be or not to be', author: 'Shakespeare'},
+  {id: 2, text: 'I think, therefore I am', author: 'Descartes'},
+  {id: 3, text: 'I have a dream', author: 'Martin Luther King'},
+  {id: 4, text: 'Tonights the night', author: 'Dexter Morgan'},
 ];
 
 const getItems = (res) => {
