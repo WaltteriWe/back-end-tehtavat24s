@@ -5,8 +5,6 @@ const port = 3000;
 const app = express();
 
 // bind base url for all media routes to mediaRouter
-app.use('/api/media', mediaRouter);
-
 // set up pug as view engine
 app.set('view engine', 'pug');
 app.set('views', 'src/views');

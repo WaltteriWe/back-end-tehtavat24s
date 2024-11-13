@@ -14,6 +14,7 @@ const postItem = (req, res) => {
 
 const getItemById = (req, res) => {
   const id = parseInt(req.params.id);
+  const mediaItems = fetchMediaItems();
   const item = mediaItems.find((item) => item.media_id === id);
   if (item) {
     if (req.query.format === 'plain') {
