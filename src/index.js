@@ -21,6 +21,9 @@ app.use('/media', express.static('media'));
 //media resource endpoints
 app.use('/api/media', mediaRouter);
 
+//likes resource endpoints
+app.use('/api/likes', mediaRouter);
+
 //user resource endpoints
 //TODO: implement userRouter
 // app.use('/api/users', userRouter);

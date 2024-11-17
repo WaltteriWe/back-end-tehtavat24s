@@ -17,6 +17,14 @@ GET http://localhost:3000/api/media/963
 POST http://localhost:3000/api/media
 Content-Type: application/json
 
+### Fetch all likes for a specific media item.
+GET http://localhost:3000/api/likes/media/:id
+### Fetch all likes for a specific user.
+GET http://localhost:3000/api/likes/user/:id
+### Add a like
+POST http://localhost:3000/api/likes/
+### Remove likes by id
+http://localhost:3000/api/likes/:id
 {
     "filename": "uusi.jpg",
     "filesize": 887574,

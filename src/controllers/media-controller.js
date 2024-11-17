@@ -1,4 +1,10 @@
 import {addMediaItem, fetchMediaItems} from '../models/media-model.js';
+import {
+  fetchLikesByMediaId,
+  fetchLikesByUserId,
+  addLike,
+  // removeLike,
+} from '../models/media-model.js';
 
 const getItems = async (req, res) => {
   try {
@@ -32,4 +38,53 @@ const getItemById = (req, res) => {
   }
 };
 
-export {getItems, postItem, getItemById};
+// get all likes for a specific media item
+const getLikesByMediaId = async (req, res) => {
+  try {
+    const mediaId = parseInt(req.params.id);
+    const likes = await fetchLikesByMediaId(mediaId);
+    res.json(likes);
+  } catch (e) {
+    console.error('getLikesByMediaId', e.message);
+    res.status(503).json({error: 503, message: 'DB error'});
+  }
+
+};
+// get all likes by a specific user
+  const getLikesByUserId = async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const likes = await fetchLikesByUserId(userId);
+      res.json(likes);
+    }
+    catch (e) {
+      console.error('getLikesByUserId', e.message);
+      res.status(503).json({error: 503, message: 'DB error'});
+    }
+};
+
+// add a like to a media item
+const postLike = async (req, res) => {
+  try {
+    const { mediaId, userId } = req.body;
+    const likeId = await addLike(mediaId, userId);
+    res.status(201).json({ message: 'Like added', likeId });
+  } catch (e) {
+    console.error('postLike', e.message);
+    res.status(503).json({ error: 503, message: 'DB error' });
+  }
+};
+
+// delete a like on a media item
+const deleteLike = async (req, res) => {
+  try {
+    const likeId = parseInt(req.params.id);
+    await deleteLike(likeId);
+    res.status(200).json({message: 'Like deleted'});
+  } catch (e) {
+    console.error('removeLike', e.message);
+    res.status(503).json({error: 503, message: 'DB error'});
+  }
+};
+
+export {getItems, postItem, getItemById, getLikesByMediaId, getLikesByUserId, deleteLike, postLike};
