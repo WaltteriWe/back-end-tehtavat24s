@@ -23,7 +23,15 @@ GET http://localhost:3000/api/likes/media/:id
 GET http://localhost:3000/api/likes/user/:id
 ### Add a like
 POST http://localhost:3000/api/likes/
+Content-Type: application/json
+{
+    "username": "JohnDoe",
+    "password": "to-be-hashed1"
+}
 ### Remove likes by id
+
+### Login
+POST http://localhost:3000/api/auth/login
 http://localhost:3000/api/likes/:id
 {
     "filename": "uusi.jpg",

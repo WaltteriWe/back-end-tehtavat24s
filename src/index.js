@@ -1,5 +1,6 @@
 import express from 'express';
 import mediaRouter from './routes/media-router.js';
+import authRouter from './routes/auth-router.js';
 const hostname = '127.0.0.1';
 const port = 3000;
 const app = express();
@@ -23,6 +24,9 @@ app.use('/api/media', mediaRouter);
 
 //likes resource endpoints
 app.use('/api/likes', mediaRouter);
+
+//ölkasj
+app.use('/api/users', authRouter);
 
 //user resource endpoints
 //TODO: implement userRouter
