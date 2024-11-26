@@ -1,7 +1,10 @@
 import promisePool from '../utils/database.js';
 
-
-// Fetch all media items
+/**
+ * Fetch all media items from the database
+ * TODO: limit the number of items returned based on query parameter?
+ * @returns {Promise<Array>} array of media items
+ */
 const fetchMediaItems = async () => {
   try {
     const [rows] = await promisePool.query('SELECT * FROM MediaItems');
@@ -12,7 +15,11 @@ const fetchMediaItems = async () => {
   }
 };
 
-// Fetch a specific media item by id
+/**
+ * Fetch a media item from the database based on id
+ * @param {number} id media item id
+ * @returns {Promise<object>} media item details
+ */
 const fetchMediaItemById = async (id) => {
   try {
     const sql = 'SELECT * FROM MediaItems WHERE media_id = ?';
@@ -25,68 +32,50 @@ const fetchMediaItemById = async (id) => {
   }
 };
 
-// Add a new media item
+/**
+ * Add a new media item to the database
+ * @param {object} newItem media file details
+ * @returns {Promise<number>} id of the new item
+ */
 const addMediaItem = async (newItem) => {
-  const sql =
-    'insert into MediaItems (title, description, filename, filesize, media_type, created_at) values (?, ?, ?, ?, ?)';
+  const sql = `INSERT INTO MediaItems
+                (user_id, title, description, filename, filesize, media_type)
+                VALUES (?, ?, ?, ?, ?, ?)`;
   const params = [
+    newItem.user_id,
     newItem.title,
     newItem.description,
     newItem.filename,
     newItem.filesize,
     newItem.media_type,
   ];
-  const result = await promisePool.query(sql, params);
-  console.log('addMediaItem', result);
-  return newItem.media_id;
-};
-
-// Fetch all likes for a specific media item
-const fetchLikesByMediaId = async (mediaId) => {
   try {
-    const sql = 'SELECT * FROM Likes WHERE media_id = ?';
-    const [rows] = await promisePool.query(sql, [mediaId]);
-    return rows;
-  } catch (e) {
-    console.error('fetchLikesByMediaId', e.message);
-    throw new Error('Database error ' + e.message);
+    const result = await promisePool.query(sql, params);
+    // console.log('addMediaItem', result);
+    return result[0].insertId;
+  } catch (error) {
+    console.error('addMediaItem', error.message);
+    throw new Error('Database error ' + error.message);
   }
 };
 
-// Fetch all likes by a specific user
-const fetchLikesByUserId = async (userId) => {
+/**
+ * Update a media item in the database
+ * @param {number} id
+ * @param {object} updatedItem
+ * @returns {Promise<number>} number of affected rows
+ */
+const updateMediaItem = async (id, userId, updatedItem) => {
+  const sql = `UPDATE MediaItems SET title = ?, description = ? WHERE media_id = ? AND user_id = ?`;
+  const params = [updatedItem.title, updatedItem.description, id, userId];
   try {
-    const sql = 'SELECT * FROM Likes WHERE user_id = ?';
-    const [rows] = await promisePool.query(sql, [userId]);
-    return rows;
-  } catch (e) {
-    console.error('fetchLikesByUserId', e.message);
-    throw new Error('Database error ' + e.message);
+    const result = await promisePool.query(sql, params);
+    console.log('updateMediaItem', result);
+    return result[0].affectedRows;
+  } catch (error) {
+    console.error('updateMediaItem', error.message);
+    throw new Error('Database error ' + error.message);
   }
 };
 
-// Add a new like
-const addLike = async (mediaId, userId) => {
-  try {
-    const sql = 'INSERT INTO Likes (media_id, user_id) VALUES (?, ?)';
-    const [result] = await promisePool.query(sql, [mediaId, userId]);
-    return result.insertId;
-  } catch (e) {
-    console.error('addLike', e.message);
-    throw new Error('Database error ' + e.message);
-  }
-};
-
-// Remove a like
-const removeLike = async (likeId) => {
-  try {
-    const sql = 'DELETE FROM Likes WHERE like_id = ?';
-    await promisePool.query(sql, [likeId]);
-    return true;
-  } catch (e) {
-    console.error('deleteLike', e.message);
-    throw new Error('Database error ' + e.message);
-  }
-};
-
-export {fetchMediaItems, fetchMediaItemById, addMediaItem, fetchLikesByMediaId, fetchLikesByUserId, addLike, removeLike};
+export {fetchMediaItems, fetchMediaItemById, addMediaItem, updateMediaItem};
