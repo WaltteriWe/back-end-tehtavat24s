@@ -114,4 +114,5 @@ export {
   getLikesByUserId,
   deleteLike,
   postLike,
+  addLike,
 };
