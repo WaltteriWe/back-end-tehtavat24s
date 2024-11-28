@@ -4,7 +4,7 @@
   "description": "Examples for the course",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "start": "node src/index.js"
   },
   "author": "walttewe",
@@ -22,7 +22,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "multer": "^1.4.5-lts.1",
-    "mysql2": "^3.11.4",
+    "mysql2": "^3.11.5",
     "pug": "^3.0.3"
   }
 }

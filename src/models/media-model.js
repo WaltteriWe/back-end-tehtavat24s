@@ -25,11 +25,31 @@ const fetchMediaItemById = async (id) => {
   }
 };
 
+/**
+ * Update a media item in the database
+ * @param {number} id
+ * @param {object} updatedItem
+ * @returns {Promise<number>} number of affected rows
+ */
+const updateMediaItem = async (id, updatedItem) => {
+  const sql = `UPDATE MediaItems SET title = ?, description = ? WHERE media_id = ?`;
+  const params = [updatedItem.title, updatedItem.description, id];
+  try {
+    const result = await promisePool.query(sql, params);
+    console.log('updateMediaItem', result);
+    return result[0].affectedRows;
+  } catch (error) {
+    console.error('updateMediaItem', error.message);
+    throw new Error('Database error ' + error.message);
+  }
+};
+
 // Add a new media item
 const addMediaItem = async (newItem) => {
   const sql =
-    'insert into MediaItems (title, description, filename, filesize, media_type, created_at) values (?, ?, ?, ?, ?)';
+    'insert into MediaItems (user_id, title, description, filename, filesize, media_type) values (?, ?, ?, ?, ?, ?)';
   const params = [
+    newItem.user_id,
     newItem.title,
     newItem.description,
     newItem.filename,
@@ -39,6 +59,18 @@ const addMediaItem = async (newItem) => {
   const result = await promisePool.query(sql, params);
   console.log('addMediaItem', result);
   return newItem.media_id;
+};
+
+// Delete a media item
+const deleteMediaItem = async (id) => {
+  try {
+    const sql = 'DELETE FROM MediaItems WHERE media_id = ?';
+    await promisePool.query(sql, [id]);
+    return true;
+  } catch (e) {
+    console.error('deleteMediaItem', e.message);
+    throw new Error('Database error ' + e.message);
+  }
 };
 
 // Fetch all likes for a specific media item
@@ -78,7 +110,7 @@ const addLike = async (mediaId, userId) => {
 };
 
 // Remove a like
-const removeLike = async (likeId) => {
+const deleteLike = async (likeId) => {
   try {
     const sql = 'DELETE FROM Likes WHERE like_id = ?';
     await promisePool.query(sql, [likeId]);
@@ -89,4 +121,4 @@ const removeLike = async (likeId) => {
   }
 };
 
-export {fetchMediaItems, fetchMediaItemById, addMediaItem, fetchLikesByMediaId, fetchLikesByUserId, addLike, removeLike};
+export {fetchMediaItems, fetchMediaItemById, addMediaItem, fetchLikesByMediaId, fetchLikesByUserId, addLike, deleteLike, updateMediaItem, deleteMediaItem};

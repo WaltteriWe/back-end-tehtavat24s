@@ -9,13 +9,41 @@ GET http://localhost:3000/api/media
 GET http://localhost:3000/api/media/9632?format=plain
 
 ### 2nd version
-GET http://localhost:3000/api/media/9632
+GET http://localhost:3000/api/media/1
 ### test not found
 GET http://localhost:3000/api/media/963
 
+### Update item
+PUT http://localhost:3000/api/media/1
+Content-Type: application/json 
+
+{
+    "title": "Uusi kuva",
+    "description": "testikuvaus"
+}
+
 ### Create an item
 POST http://localhost:3000/api/media
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="title"
+
+New image
+------Boundary
+Content-Disposition: form-data; name="description"
+
+Kiva kuva ystävällisestä rikospaikka tutkijasta.
+------Boundary
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./dexter.webp
+------Boundary--
+
+### Delete an item
+DELETE http://localhost:3000/api/media/1
+
 
 ### Fetch all likes for a specific media item.
 GET http://localhost:3000/api/likes/media/:id
@@ -23,6 +51,8 @@ GET http://localhost:3000/api/likes/media/:id
 GET http://localhost:3000/api/likes/user/:id
 ### Add a like
 POST http://localhost:3000/api/likes/
+
+
 ### Remove likes by id
 http://localhost:3000/api/likes/:id
 {
