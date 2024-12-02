@@ -1,19 +1,20 @@
-import {validationResult} from 'express-validator';
+import bcrypt from 'bcryptjs';
+import {customError} from '../middlewares/error-handlers.js';
 import {addUser} from '../models/user-model.js';
 
 const postUser = async (req, res, next) => {
-  // validation errors can be retrieved from the request object (added by express-validator middleware)
-  const errors = validationResult(req);
-  // check if any validation errors
-  if (!errors.isEmpty()) {
-    // pass the error to the error handler middleware
-    const error = new Error('Invalid or missing fields');
-    error.status = 400;
-    return next(error);
+  const user = req.body;
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(user.password, salt);
+  console.log('hash', hashedPassword);
+  user.password = hashedPassword;
+  try {
+    const newUserId = await addUser(user);
+    res.json({message: 'new user added', user_id: newUserId});
+  } catch (e) {
+    console.error('postUser', e.message);
+    return next(customError(e.message, 503));
   }
-  // TODO: add password hashing here and error handling for SQL errors
-  const newUserId = await addUser(req.body);
-  res.json({message: 'new user added', user_id: newUserId});
 };
 
 export {postUser};
