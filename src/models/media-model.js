@@ -31,9 +31,9 @@ const fetchMediaItemById = async (id) => {
  * @param {object} updatedItem
  * @returns {Promise<number>} number of affected rows
  */
-const updateMediaItem = async (id, updatedItem) => {
-  const sql = `UPDATE MediaItems SET title = ?, description = ? WHERE media_id = ?`;
-  const params = [updatedItem.title, updatedItem.description, id];
+const updateMediaItem = async (id, updatedItem, userID) => {
+  const sql = `UPDATE MediaItems SET title = ?, description = ? WHERE media_id = ? AND user_id = ?`;
+  const params = [updatedItem.title, updatedItem.description, id, userID];
   try {
     const result = await promisePool.query(sql, params);
     console.log('updateMediaItem', result);
@@ -62,10 +62,10 @@ const addMediaItem = async (newItem) => {
 };
 
 // Delete a media item
-const deleteMediaItem = async (id) => {
+const deleteMediaItem = async (id, userID) => {
   try {
-    const sql = 'DELETE FROM MediaItems WHERE media_id = ?';
-    await promisePool.query(sql, [id]);
+    const sql = 'DELETE FROM MediaItems WHERE media_id = ?, user_id = ?';
+    await promisePool.query(sql, [id, userID]);
     return true;
   } catch (e) {
     console.error('deleteMediaItem', e.message);

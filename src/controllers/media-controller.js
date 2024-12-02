@@ -1,3 +1,4 @@
+import { validationResult } from 'express-validator';
 import {
   addMediaItem,
   fetchMediaItems,
@@ -21,31 +22,31 @@ const getItems = async (req, res) => {
 };
 
 // Add a new media item
-const postItem = async (req, res) => {
-  console.log('post req body', req.body);
+const postItem = async (req, res, next) => {
+  // check if file is rejected by multer
+  if (!req.file) {
+    const error = new Error('Invalid or missing file');
+    error.status = 400;
+    next(error);
+  }
+  const errors = validationResult(req);
+  // check if any validation errors
+  if (!errors.isEmpty()) {
+    console.log('postMedia errors', errors.array());
+    const error = new Error('Invalid or missing fields');
+    error.status = 400;
+    return next(error);
+  }
   const {title, description} = req.body;
-  if (!title || !description) {
-    return res
-      .status(400)
-      .json({message: 'Title and description are required'});
+  const {filename, mimetype, size} = req.file;
+  // req.user is added by authenticateToken middleware
+  const user_id = req.user.user_id;
+  const newMedia = {title, description, user_id, filename, mimetype, size};
+  const result = await addMediaItem(newMedia);
+  if (result.error) {
+    return next(new Error(result.error));
   }
-  console.log('post req file', req.file);
-  const newMediaItem = {
-    user_id: 1,
-    title,
-    description,
-    filename: req.file.filename,
-    filesize: req.file.size,
-    media_type: req.file.mimetype,
-  };
-  try {
-    const id = await addMediaItem(newMediaItem);
-    console.log(id);
-    res.status(201).json({message: 'Item added', id: id});
-  } catch (e) {
-    console.error('postItem', e.message);
-    res.status(503).json({error: 503, message: 'DB error'});
-  }
+  res.status(201).json({message: 'New media item added.', ...result});
 };
 
 // Get a media item by ID
@@ -131,10 +132,10 @@ const putItem = async (req, res) => {
     description,
   };
   try {
-    const itemsEdited = await updateMediaItem(req.params.id, newDetails);
+    const itemsEdited = await updateMediaItem(req.params.id, newDetails, req.user.user_id);
     // if no items were edited (id was not found in DB), return 404
     if (itemsEdited === 0) {
-      return res.status(404).json({message: 'Item not found'});
+      return res.status(404).json({message: 'Item not found or unauthorized'});
     } else if (itemsEdited === 1) {
       return res.status(200).json({message: 'Item updated', id: req.params.id});
     }
@@ -149,7 +150,7 @@ const putItem = async (req, res) => {
 const deleteItem = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const deleted = await deleteMediaItem(id);
+    const deleted = await deleteMediaItem(id, req.user.user_id);
     if (deleted) {
       res.status(200).json({message: 'Item deleted', status: 200});
     } else {

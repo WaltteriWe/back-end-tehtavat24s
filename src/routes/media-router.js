@@ -1,38 +1,30 @@
 import express from 'express';
-import multer from 'multer';
+import {body} from 'express-validator';
+import 'dotenv/config';
 import {
-  deleteItem,
   getItemById,
   getItems,
-  getLikesByMediaId,
-  getLikesByUserId,
   postItem,
-  postLike,
   putItem,
-  removeLike,
 } from '../controllers/media-controller.js';
-
-const upload = multer({dest: 'uploads/'});
+import {authenticateToken} from '../middlewares/authentication.js';
+import upload from '../middlewares/upload.js';
+import {validationErrorHandler} from '../middlewares/error-handlers.js';
 
 const mediaRouter = express.Router();
 
-// Media resource endpoints
-mediaRouter.route('/').get(getItems).post(upload.single('file'), postItem);
+mediaRouter
+  .route('/')
+  .get(getItems)
+  .post(
+    authenticateToken,
+    upload.single('file'),
+    body('title').trim().isLength({min: 3, max: 50}),
+    body('description').trim().isLength({max: 255}),
+    validationErrorHandler,
+    postItem,
+  );
 
-mediaRouter.route('/:id').get(getItemById).put(putItem).delete(deleteItem);
-
-// Likes resource endpoints
-
-// Get likes for a specific media item
-mediaRouter.get('/media/:id', getLikesByMediaId);
-
-// Get likes by a specific user
-mediaRouter.get('/user/:id', getLikesByUserId);
-
-// Add a like for a specific media item
-mediaRouter.post('/', postLike)
-
-// remove like from a specific media item
-mediaRouter.delete('/:id', removeLike);
+mediaRouter.route('/:id').get(getItemById).put(authenticateToken, putItem);
 
 export default mediaRouter;

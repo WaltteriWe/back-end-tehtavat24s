@@ -1,20 +1,18 @@
 import multer from 'multer';
-import {customError} from './error-handlers.js';
+// import {customError} from './error-handlers.js';
 
 const upload = multer({
   dest: 'uploads/',
-  limits: {fileSize: 1024 * 1024 * process.env.MAX_UPLOAD_SIZE},
+  limits: {
+    fileSize: 10 * 1024 * 1024, // max 10 MB
+  },
   fileFilter: (req, file, cb) => {
-    // allow only images and videos
-    if (
-      file.mimetype.startsWith('image/') ||
-      file.mimetype.startsWith('video/')
-    ) {
-      // accept file
+    // only allow images and videos
+    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
       cb(null, true);
     } else {
-      // reject file
-      const error = customError('File invalid.', 400);
+      const error = new Error('Only images and videos are allowed!');
+      error.status = 400;
       cb(error, false);
     }
   },

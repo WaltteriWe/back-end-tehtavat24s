@@ -118,3 +118,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpY
   "title": "Muokattu kuva",
   "description": "Tosi kiva."
 }
+
+### Get user info to test authentication
+GET http://localhost:3000/api/auth/me
+Authorization: Bearer <your_jwt_token>
+
+### Fixed registration of new user
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "DoeJoe",
+  "password": "Monkey123",
+  "email": "doejoe@example.com",
+  "user_level_id": 2
+}
