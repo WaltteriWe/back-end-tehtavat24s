@@ -26,22 +26,18 @@ POST http://localhost:3000/api/likes/
 Content-Type: application/json
 {
     "username": "JohnDoe",
-    "password": "to-be-hashed1"
+    "password": "to-be-hashed-pw1"
 }
 ### Remove likes by id
 
 ### Login
 POST http://localhost:3000/api/auth/login
-http://localhost:3000/api/likes/:id
+Content-Type: application/json
+
 {
-    "filename": "uusi.jpg",
-    "filesize": 887574,
-    "title": "Uusi kuva",
-    "description": "testikuvaus",
-    "user_id": 1606,
-    "media_type": "image/jpeg",
-    "created_at": "2023-10-16T19:00:09.000Z"
-}# Example api requests
+  "username": "JohnDoe",
+  "password": "to-be-hashed-pw1"
+}
 
 ## User authentication
 
@@ -50,7 +46,7 @@ POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
 {
-  "username": "ne",
+  "username": "new",
   "password": "new",
   "email": "newuser3@example.com"
 }

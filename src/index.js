@@ -28,6 +28,10 @@ app.use('/api/likes', mediaRouter);
 //ölkasj
 app.use('/api/users', authRouter);
 
+
+//login resource endpoints
+app.use('/api/auth', authRouter);
+
 //user resource endpoints
 //TODO: implement userRouter
 // app.use('/api/users', userRouter);

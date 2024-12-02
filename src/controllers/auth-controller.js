@@ -5,6 +5,7 @@ import 'dotenv/config';
 const postLogin = async (req, res) => {
   console.log('postLogin', req.body);
   const {username, password} = req.body;
+  try {
   const user = await selectUserByUsernameAndPassword(username, password);
   if (user) {
     // Voi käyttää mahdollisesti myös pelkkää userID userin tilalla
@@ -14,6 +15,10 @@ const postLogin = async (req, res) => {
     res.json({...user, token});
   } else {
     res.sendStatus(401);
+  }
+} catch (e) {
+    console.error('postLogin', e.message);
+    res.status(503).json({error: 503, message: 'DB error'});
   }
 };
 
@@ -31,4 +36,4 @@ const getMe = async (req, res) => {
   res.json(req.user);
 };
 
-export {postLogin, getMe};
+export {postLogin, getMe, };
