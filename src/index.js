@@ -3,9 +3,22 @@ import mediaRouter from './routes/media-router.js';
 import authRouter from './routes/auth-router.js';
 import { errorHandler, notFoundHandler } from './middlewares/error-handlers.js';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 const hostname = '127.0.0.1';
 const port = 3000;
 const app = express();
+
+// Add security headers
+app.use(helmet());
+
+
+//Rate limit to ensure that the server is not overwhelmed with requests
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
 
 // bind base url for all media routes to mediaRouter
 // set up pug as view engine
@@ -43,6 +56,8 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 app.use(cors());
+
+
 
 
 app.listen(port, hostname, () => {

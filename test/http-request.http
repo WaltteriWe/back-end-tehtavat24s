@@ -30,15 +30,6 @@ Content-Type: application/json
 }
 ### Remove likes by id
 
-### Login
-POST http://localhost:3000/api/auth/login
-Content-Type: application/json
-
-{
-  "username": "JohnDoe",
-  "password": "to-be-hashed-pw1"
-}
-
 ## User authentication
 
 ### Register
@@ -46,9 +37,9 @@ POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
 {
-  "username": "new",
-  "password": "new",
-  "email": "newuser3@example.com"
+  "username": "Aldi",
+  "password": "AiMagic",
+  "email": "Vultures3245@ye.com"
 }
 
 ### Login
@@ -56,8 +47,8 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "newuser3",
-  "password": "new-password"
+  "username": "JohnDo",
+  "password": "password123",
 }
 
 ### Get my user info

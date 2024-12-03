@@ -7,6 +7,7 @@ import {customError} from '../middlewares/error-handlers.js';
 const postLogin = async (req, res, next) => {
   console.log('postLogin', req.body);
   const {username, password} = req.body;
+  try {
   const user = await selectUserByUsername(username);
   if (!user) {
     return next(customError(`Username not found.`, 401));
@@ -21,6 +22,10 @@ const postLogin = async (req, res, next) => {
     return res.json({...user, token});
   } else {
     return next(customError(`Password invalid.`, 401));
+  }
+  } catch (error) {
+    console.error('postLogin', error.message);
+    return next(customError('Database error ' + error.message, 503));
   }
 };
 

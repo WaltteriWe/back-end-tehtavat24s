@@ -13,12 +13,12 @@ const selectUserById = async (id) => {
   }
 };
 
-const selectUserByUsernameAndPassword = async (username, password) => {
+const selectUserByUsername = async (username) => {
   try {
     // TODO: return only user_id?
     const [rows] = await promisePool.query(
-      'SELECT user_id, username, email, user_level_id, created_at FROM Users WHERE username = ? AND password = ?',
-      [username, password],
+      'SELECT user_id, username, email, password, user_level_id, created_at FROM Users WHERE username = ?',
+      [username],
     );
     return rows[0];
   } catch (error) {
@@ -39,7 +39,7 @@ const addUser = async (user) => {
                 VALUES (?, ?, ?, ?)`;
     // user level id defaults to 2 (normal user)                 
     const params = [user.username, user.email, user.password, 2];
-    const result = await promisePool.query(sql, params);
+    const [result] = await promisePool.query(sql, params);
     return result[0].insertId;
   } catch (e) {
     console.error('error', e.message);
@@ -47,4 +47,4 @@ const addUser = async (user) => {
   }
 }
 
-export {selectUserByUsernameAndPassword, selectUserById, addUser};
+export {selectUserByUsername, selectUserById, addUser};
